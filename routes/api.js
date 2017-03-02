@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var mysql = require('mysql');
+var utility = require('utility');
 
 var connection = mysql.createConnection({
   host     : 'localhost',
@@ -27,4 +28,20 @@ router.post('/wade', function(req, res, next) {
 	res.json({status: 200, message: "这是一个JSON接口", data: 'hahaha'});
 });
 
+router.post('/login', function(req, res, next) {
+	console.log(req.body.account)
+	connection.query("SELECT * FROM ed_admin WHERE account = '" + req.body.account +  "'", function (error, results, fields) {
+		if (error) throw error;
+		if(!results.length) {
+			res.json({status: 300});
+		}
+		if(results[0].password === req.body.password) {
+			res.json({status: 200, message: "登陆成功"});
+		} else {
+			res.json({status: 300, message: "登陆失败"});
+		}
+		
+	});
+	
+});
 module.exports = router;
