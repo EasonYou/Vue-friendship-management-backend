@@ -15,4 +15,7 @@ router.post('/wade', function(req, res, next) {
 router.post('/login', function(req, res, next) {
 	query.login(req, res, next)
 });
+router.post('/logout', function(req, res, next) {
+	query.logout(req, res, next)
+});
 module.exports = router;

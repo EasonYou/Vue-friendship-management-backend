@@ -22,6 +22,20 @@ module.exports = {
 			
 		});
 	},
+	logout: function(req, res, next) {
+	connection.query("SELECT * FROM ed_admin WHERE token = '" + req.body.token + "'", function (error, results, fields) {
+			if (error) throw error;
+			if(!results.length) {
+				res.json({status: 300});
+				return;
+			}
+			connection.query("UPDATE ed_admin SET token = '' WHERE id = 1" , function(error, results, fields) {
+				if (error) throw error;
+				res.json({status: 200, message: "登出成功"});
+			})
+			
+		});
+	},
 	getUserLists: function(req, res, next) {
 		console.log('cookies', req.cookies)
 		connection.query("SELECT * FROM ed_admin WHERE token = '" + req.body.token + "'", function(error, results, fields) {
