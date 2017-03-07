@@ -18,4 +18,8 @@ router.post('/login', function(req, res, next) {
 router.post('/logout', function(req, res, next) {
 	query.logout(req, res, next)
 });
+
+router.post('/userDetail/:id', function(req, res, next) {
+	query.getUserDetail(req, res, next)
+});
 module.exports = router;

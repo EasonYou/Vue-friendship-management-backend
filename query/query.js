@@ -1,5 +1,6 @@
 var connection = require('./connection').connection
 var utility = require('utility');
+var util = require('./util')
 
 module.exports = {
 	login: function(req, res, next) {
@@ -23,29 +24,28 @@ module.exports = {
 		});
 	},
 	logout: function(req, res, next) {
-	connection.query("SELECT * FROM ed_admin WHERE token = '" + req.body.token + "'", function (error, results, fields) {
-			if (error) throw error;
-			if(!results.length) {
-				res.json({status: 300});
-				return;
-			}
+		util.checkToken(req, res, next, function() {
 			connection.query("UPDATE ed_admin SET token = '' WHERE id = 1" , function(error, results, fields) {
 				if (error) throw error;
 				res.json({status: 200, message: "登出成功"});
 			})
-			
-		});
+		})
 	},
 	getUserLists: function(req, res, next) {
-		console.log('cookies', req.cookies)
-		connection.query("SELECT * FROM ed_admin WHERE token = '" + req.body.token + "'", function(error, results, fields) {
-			if(error) throw error
-			if(!results.length) {
-				res.json({status: 300, message: '登陆超时'})
-				return
-			}
+		util.checkToken(req, res, next, function() {
 			connection.query("SELECT * FROM ed_user", function(error, results, fields) {
 				if (error) throw error
+				res.json({status: 200, message: '获取列表成功', data: results})
+			})
+		})
+	},
+	getUserDetail: function(req, res, next) {
+		console.log(req.body, 'gud')
+		util.checkToken(req, res, next, function() {
+			console.log('aaa')
+			connection.query("SELECT * FROM ed_user WHERE id = '" + req.body.id + "'", function(error, results, fields) {
+				if (error) throw error
+				console.log('results')
 				res.json({status: 200, message: '获取列表成功', data: results})
 			})
 		})
