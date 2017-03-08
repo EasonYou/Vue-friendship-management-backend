@@ -46,8 +46,30 @@ module.exports = {
 			connection.query("SELECT * FROM ed_user WHERE id = '" + req.body.id + "'", function(error, results, fields) {
 				if (error) throw error
 				console.log('results')
-				res.json({status: 200, message: '获取列表成功', data: results})
+				res.json({status: 200, message: '获取用户详情成功', data: results})
 			})
 		})
+	},
+	blockUser: function(req, res, next) {
+		console.log(req.body)
+		util.checkToken(req, res, next, function() {
+			connection.query("UPDATE ed_user SET state = '" + req.body.state + "' WHERE id = " + req.body.id , function(error, results, fields) {
+					if (error) throw error;
+					res.json({status: 200, message: "用户状态操作成功"});
+				})
+		})
+	},
+	userDataSubmit: function(req, res, next) {
+		let q = req.body
+		console.log("UPDATE ed_user SET nickname = '" + q.nickname 
+						+ ",address = '" + q.address			
+						+ "' WHERE id = " + req.params.id)
+
+		connection.query("UPDATE ed_user SET nickname = '" + q.nickname 
+						+ ",address = '" + q.address			
+						+ "' WHERE id = " + req.params.id , function(error, results, fields) {
+					if (error) throw error;
+					res.json({status: 200, message: "用户状态操作成功"});
+				})
 	}
 }
