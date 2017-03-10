@@ -53,21 +53,33 @@ module.exports = {
 		})
 	},
 	getUserLists: function(req, res, next) {
-		let query = "SELECT * FROM ed_user"
+		let query = "SELECT * FROM ed_user",
+			count, lastResults,
+			limit = [],
+			range = 2
+			limit.push((req.body.page-1) * range)
+			limit.push(req.body.page * range)
+			console.log(limit)
 		util.select({
 			token: util.getToken(req),
 			table: 'ed_user',
-			// target: ['nickname', 'birthday'],
-			// limit: [0, 2],
-			// params: {
-			// 	nickname: ['13750051234'],
-			// 	email: ['yycanusher@126.com']
-			// },
+			target: ['count(*)'],
+			query: 'sex = 0',
 			success: function(results) {
-				res.json({
-					status: 200,
-					message: '获取列表成功',
-					data: results
+				count = results[0]['count(*)']
+				util.select({
+					token: util.getToken(req),
+					table: 'ed_user',
+					limit: limit,
+					success: function(r) {
+						lastResults = r
+						res.json({
+							status: 200,
+							message: '获取用户详情成功',
+							count: count + 1,
+							data: lastResults
+						})
+					}
 				})
 			}
 		})

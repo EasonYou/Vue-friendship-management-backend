@@ -33,6 +33,7 @@ module.exports = {
 	* {Function} success(results) 成功回调函数
 	*/
 	update: function(options) {	
+		console.log(options.query)
 		let str = '',
 			q = 'UPDATE ' + options.table,
 			p = '('
@@ -58,17 +59,28 @@ module.exports = {
 		this.query(options.token, q, options.success)
 	},
 	select: function(options) {
+
 		let target = '',
 			q = 'SELECT '
+		
 		if(options.target && options.target.constructor === Array) {
 			for(let i = 0; i < options.target.length; i ++) {
+				if(options.target[i] === 'count(*)' || options.target[i] === 'count') {
+					target += ' count(*) '
+					break;
+				}
 				target += options.target[i] + ','
 			}
 		} else {
 			target = '*'
 		}
+
 		target = target.replace(/,$/, '')
 		q += target + ' FROM ' + options.table
+		if(options.query) {
+			q += ' WHERE ' + options.query
+		}
+		console.log(options.limit && options.target)
 		if(options.limit) {
 			var limit = ' LIMIT '
 			for(let i = 0; i< options.limit.length; i++) {
