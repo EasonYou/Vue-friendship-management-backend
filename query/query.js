@@ -42,7 +42,7 @@ module.exports = {
 			query: {
 				token: ''
 			},
-			target: 'id',
+			aim: 'id',
 			params: [1],
 			success: function(results) {
 				res.json({
@@ -76,7 +76,7 @@ module.exports = {
 						res.json({
 							status: 200,
 							message: '获取用户详情成功',
-							count: count + 1,
+							count: count,
 							data: lastResults
 						})
 					}
@@ -86,14 +86,18 @@ module.exports = {
 	},
 	getUserDetail: function(req, res, next) {
 		let query = "SELECT * FROM ed_user WHERE id = '" + req.body.id + "'"
-
-		util.query(util.getToken(req), query, function(results) {
-			results[0].birthday = moment.unix(results[0].birthday).format().slice(0, 10)
-			res.json({
-				status: 200,
-				message: '获取用户详情成功',
-				data: results
-			})
+		util.select({
+			token: util.getToken(req),
+			table: 'ed_user',
+			aim: 'id',
+			params: req.body.id,
+			success (r) {
+					res.json({
+						status: 200,
+						message: '获取用户详情成功',
+						data: r
+					})
+			}
 		})
 	},
 	blockUser: function(req, res, next) {
@@ -101,7 +105,7 @@ module.exports = {
 			token: util.getToken(req),
 			table: 'ed_user',
 			query: req.body.data,
-			target: 'id',
+			aim: 'id',
 			params: req.body.data.id,
 			success: function(results) {
 				res.json({
@@ -118,7 +122,7 @@ module.exports = {
 			token: util.getToken(req),
 			table: 'ed_user',
 			query: q,
-			target: 'id',
+			aim: 'id',
 			params: req.params.id,
 			success: function(results) {
 				res.json({
