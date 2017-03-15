@@ -23,13 +23,16 @@ router.post('/userDetail/:id', function(req, res, next) {
 	query.getUserDetail(req, res, next)
 });
 
-router.post('/block/:id', function(req, res, next) {
+router.post('/block', function(req, res, next) {
 	query.blockUser(req, res, next)
 });
 
 router.post('/userDataSubmit/:id', function(req, res, next) {
 	query.userDataSubmit(req, res, next)
 });
-
+router.post('/charts/genderRatio', function(req, res, next) {
+	console.log('aaa')
+	query.getGenderRatio(req, res, next)
+});
 
 module.exports = router;

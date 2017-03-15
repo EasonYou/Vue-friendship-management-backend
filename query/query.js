@@ -4,7 +4,7 @@ var util = require('./util')
 var moment = require('moment')
 
 module.exports = {
-	login: function(req, res, next) {
+	login (req, res, next) {
 		let query = "SELECT * FROM ed_admin WHERE account = '" + req.body.account + "'"
 		connection.query(query, function(error, results, fields) {
 			if (error) throw error;
@@ -35,7 +35,7 @@ module.exports = {
 
 		});
 	},
-	logout: function(req, res, next) {
+	logout (req, res, next) {
 		util.update({
 			token: util.getToken(req),
 			table: 'ed_admin',
@@ -52,7 +52,7 @@ module.exports = {
 			}
 		})
 	},
-	getUserLists: function(req, res, next) {
+	getUserLists (req, res, next) {
 		let query = "SELECT * FROM ed_user",
 			count, lastResults,
 			limit = [],
@@ -84,7 +84,7 @@ module.exports = {
 			}
 		})
 	},
-	getUserDetail: function(req, res, next) {
+	getUserDetail (req, res, next) {
 		let query = "SELECT * FROM ed_user WHERE id = '" + req.body.id + "'"
 		util.select({
 			token: util.getToken(req),
@@ -100,14 +100,14 @@ module.exports = {
 			}
 		})
 	},
-	blockUser: function(req, res, next) {
+	blockUser (req, res, next) {
 		util.update({
 			token: util.getToken(req),
 			table: 'ed_user',
 			query: req.body.data,
 			aim: 'id',
 			params: req.body.data.id,
-			success: function(results) {
+			success (results) {
 				res.json({
 					status: 200,
 					message: "用户状态操作成功"
@@ -115,7 +115,7 @@ module.exports = {
 			}
 		})
 	},
-	userDataSubmit: function(req, res, next) {
+	userDataSubmit (req, res, next) {
 		let q = req.body.data
 		q.birthday = Date.parse(moment(q.birthday)) / 1000
 		util.update({
@@ -130,6 +130,23 @@ module.exports = {
 					message: "用户状态操作成功"
 				});
 			}
+		})
+	},
+	getGenderRatio (req, res, next) {
+		let q = "SELECT sex, count(*) FROM ed_user GROUP BY sex"
+		util.getTokenQuery(req.body.token, q, function(results) {
+			let buff = [{
+				name: results[0].sex === 0?'男' : '女',
+				value: results[0]['count(*)']
+			}, {
+				name: results[1].sex === 0?'男' : '女',
+				value: results[1]['count(*)']
+			}]
+			res.json({
+					status: 200,
+					message: "用户状态操作成功",
+					data: buff
+				});
 		})
 	}
 }
