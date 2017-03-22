@@ -58,7 +58,7 @@ module.exports = {
 			limit = [],
 			range = 2
 			limit.push((req.body.page-1) * range)
-			limit.push(req.body.page * range)
+			limit.push(range)
 			console.log(limit)
 		util.select({
 			token: util.getToken(req),
@@ -117,7 +117,9 @@ module.exports = {
 	},
 	userDataSubmit (req, res, next) {
 		let q = req.body.data
-		q.birthday = Date.parse(moment(q.birthday)) / 1000
+		q.birthday = q.birthday ? Date.parse(moment(q.birthday)) / 1000 : 0
+		q.email = q.email ? q.email : ''
+		q.address = q.address ? q.address : ''
 		util.update({
 			token: util.getToken(req),
 			table: 'ed_user',
@@ -135,12 +137,29 @@ module.exports = {
 	getGenderRatio (req, res, next) {
 		let q = "SELECT sex, count(*) FROM ed_user GROUP BY sex"
 		util.getTokenQuery(req.body.token, q, function(results) {
+			let r = []
+			if(results[0]) {
+				r.push(results[0])
+			} else {
+				r.push({
+					sex: 0,
+					'count(*)': 0
+				})
+			}
+			if(results[1]) {
+				r.push(results[1])
+			} else {
+				r.push({
+					sex: 1,
+					'count(*)': 0
+				})
+			}
 			let buff = [{
-				name: results[0].sex === 0?'男' : '女',
-				value: results[0]['count(*)']
+				name: r[0].sex === 0 ? '男' : '女',
+				value: r[0]['count(*)']
 			}, {
-				name: results[1].sex === 0?'男' : '女',
-				value: results[1]['count(*)']
+				name: r[1].sex === 0 ? '男' : '女',
+				value: r[1]['count(*)']
 			}]
 			res.json({
 					status: 200,

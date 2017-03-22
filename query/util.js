@@ -11,17 +11,14 @@ module.exports = {
 		})
 	},
 	getTokenQuery (token, query, callback) {
-		console.log(query, 'getTokenQuery')
 		this.checkToken(token, function() {
 			connection.query(query, function(error, results, fields) {
 				if(error) throw error
-				console.log('haha')
 				callback(results)
 			})
 		})
 	},
 	query (query, callback) {
-		console.log(query, 'query')
 		connection.query(query, function(error, results, fields) {
 			if(error) throw error
 			if(!results.length) {
@@ -42,7 +39,6 @@ module.exports = {
 	*/
 	// unpdate table SET query WHERE target in aim 
 	update: function(options) {	
-		console.log(options)
 		let str = '',
 			q = 'UPDATE ' + options.table,
 			p = '('
@@ -56,7 +52,6 @@ module.exports = {
 		} else {
 			var params = options.params
 		}
-		console.log(params)
 		for(let i = 0; i < options.params.length; i++) {
 			p += options.params[i] + ','
 		}
@@ -64,7 +59,7 @@ module.exports = {
 		p += ')'
 		str = str.replace(/,$/, '')
 		q += ' SET ' + str + ' WHERE ' + options.aim + ' in ' + p
-		console.log(q, 'update')
+		console.log(q)
 		if(options.token) {
 			this.getTokenQuery(options.token, q, options.success)
 		} else {
@@ -111,7 +106,7 @@ module.exports = {
 			limit = limit.replace(/,$/, '')
 			q += limit
 		}
-		console.log(q, 'select')
+		console.log(q)
 		if(options.token) {
 			this.getTokenQuery(options.token, q, options.success)
 		} else {
