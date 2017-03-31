@@ -117,6 +117,7 @@ module.exports = {
 	},
 	userDataSubmit (req, res, next) {
 		let q = req.body.data
+		console.log(q.birthday)
 		q.birthday = q.birthday ? Date.parse(moment(q.birthday)) / 1000 : 0
 		q.email = q.email ? q.email : ''
 		q.address = q.address ? q.address : ''
@@ -167,5 +168,42 @@ module.exports = {
 					data: buff
 				});
 		})
+	},
+	getNumberLine (req, res, next) {
+		let q = "SELECT daytime, count(*) FROM ed_user GROUP BY daytime"
+		console.log(util.getToken(req))
+		util.getTokenQuery(util.getToken(req), q, function(results) {
+			// 起始日 - 当天  期间 + 86400000
+			console.log('jhhhhhhh')
+			let day = 0,
+				m = Date.parse(moment()._d),
+				count = 0,
+				number = 0,
+				numberResult = [],
+				dayResult = []
+
+			for(var i = 1483200000000 ; i<m ;i += 86400000) {
+				let buff = moment(i).format("YYYY-MM-DD")
+				day ++
+				if(results[count]) {
+					if(buff === results[count].daytime) {
+						number += results[count]['count(*)']
+						count ++
+					}
+				}
+				numberResult.push(number)
+				dayResult.push(buff)
+			}
+
+			res.json({
+				status: 200,
+				message: "用户状态操作成功",
+				data: {
+					numberResult,
+					dayResult
+				}
+			});
+		})
+		
 	}
 }

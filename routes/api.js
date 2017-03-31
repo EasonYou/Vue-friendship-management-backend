@@ -35,4 +35,8 @@ router.post('/charts/genderRatio', function(req, res, next) {
 	query.getGenderRatio(req, res, next)
 });
 
+router.post('/charts/numberLine', function(req, res, next) {
+	query.getNumberLine(req, res, next)
+});
+
 module.exports = router;
