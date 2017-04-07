@@ -8,6 +8,9 @@ var mysql = require('mysql')
 var index = require('./routes/index');
 var users = require('./routes/users');
 var api = require('./routes/api');
+var multer  = require('multer')
+
+var fs = require('fs')
 
 var app = express();
 
@@ -32,9 +35,39 @@ app.all('*', function(req, res, next) {
     next();
 });
 
+var createFolder = function(folder){
+    try{
+        fs.accessSync(folder); 
+    }catch(e){
+        fs.mkdirSync(folder);
+    }  
+};
+
+var uploadFolder = './upload/';
+createFolder(uploadFolder);
+
+var storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, uploadFolder);    // 保存的路径，备注：需要自己创建
+    },
+    filename: function (req, file, cb) {
+        // 将保存文件名设置为 字段名 + 时间戳，比如 logo-1478521468943
+        let name = file.originalname.split('.')
+        cb(null, name[0] + '-' + Date.now() + '.' + name[1]);  
+    }
+});
+
+var upload = multer({ storage: storage })
+
 app.use('/', index);
 app.use('/users', users);
 app.use('/api', api);
+
+app.post('/upload', upload.single('logo'), function(req, res, next){
+    console.log(req.file)
+    res.send({ret_code: '0'});
+});
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
