@@ -1,7 +1,7 @@
 var mysql = require('mysql');
 
 exports.connection = mysql.createConnection({
-  host     : 'localhost',
+  host     : 'fs.myishu.top/mowwwsql',
   user     : 'xiaocong',
   password : '1234',
   database : 'yishu',
